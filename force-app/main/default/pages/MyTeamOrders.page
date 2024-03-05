@@ -1,0 +1,12 @@
+<apex:page controller="MyTeamOrdersController" lightningStylesheets="true">
+    <div class="header" style="display: flex;align-items: center;justify-content: center;font-size:25pt;background-color:black;color:white;">
+        FASHA
+    </div>
+    <apex:pageBlock title="Team’s orders">
+        <apex:pageBlockTable value="{!data}" var="item">
+            <apex:column headerValue="Sales Agent" value="{!item.agent}"/>
+            <apex:column headerValue="Total Orders" value="{!item.total}"/>
+        </apex:pageBlockTable>
+    </apex:pageBlock>
+
+</apex:page>

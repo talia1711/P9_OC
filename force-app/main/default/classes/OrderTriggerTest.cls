@@ -1,6 +1,11 @@
+/***
+ * Author: Talia Ajaz
+ * Date: March 2024
+ * Test class for OrderService and OrderTrigger
+ */
 @isTest
 public class OrderTriggerTest {
-    
+    //to setup data used in test methods
     @testSetup
     static void setupData(){
         //create 200 accounts
@@ -13,7 +18,7 @@ public class OrderTriggerTest {
         Product2 pd1 = new Product2(Name = 'Chemise Verte longue XYX', Family = 'Chemise');
         Insert pd1;
         
-        //Create one order per account
+        //Create one order per account, total 200 orders
         List<Order> orderList = new List<Order>();
         for(Account acc : accList){
             orderList.add(new Order(AccountId = acc.Id, 
@@ -33,7 +38,7 @@ public class OrderTriggerTest {
         );
         insert pbe;
         
-        //create one order item per order
+        //create one order item per order, total 200 order items
 		List<OrderItem> orderItemList = new List<OrderItem>();
         for(Order oo : orderList){
             oo.Status = 'Ordered';
@@ -44,50 +49,64 @@ public class OrderTriggerTest {
         update orderList;
     }
     
+    //test the orders net amnount calculation during order update for 1 order
     @isTest
     static void calculateNetAmountTest() {
+        //prepare data
         Order newOrder = [SELECT AccountId, Status, ShipmentCost__c FROM Order LIMIT 1];
             
+        //execute test
         Test.startTest();
         	newOrder.Status = 'Ordered';
             update newOrder;
         Test.stopTest();
         
+        //Assert for result
         Order updatedOrder = [SELECT NetAmount__c FROM Order WHERE Id =:newOrder.Id LIMIT 1];
         Assert.areEqual(100.00, updatedOrder.NetAmount__c, 'The net amount should be 100');
     }
     
+    //test the orders net amnount calculation during order update for 200 orders
     @isTest
     static void calculateNetAmountBatchTest() {
+        //prepare data
         List<Order> orderList = [SELECT AccountId, Status, ShipmentCost__c FROM Order];
         for(Order order: orderList){
             order.Status = 'Ordered';
         }
         
+        //execute test
         Test.startTest();
         	update orderList;
         Test.stopTest();
         
+        //Assert for result
         for(Order updatedOrder : [SELECT NetAmount__c FROM Order WHERE Id IN:orderList]){
             Assert.areEqual(100.00, updatedOrder.NetAmount__c, 'The net amount should be 100');
         }
     }
-    
+
+    //test the related order account turnover calculation for 1 order
     @isTest
     static void calculateAccountTurnOverTest() {
+        //prepare data
         Order newOrder = [SELECT AccountId, Status, ShipmentCost__c FROM Order LIMIT 1];
       
+        //execute test
         Test.startTest();
         	newOrder.Status = 'Ordered';
             update newOrder;
         Test.stopTest();
         
+        //Assert for result
         Account newAccounts = [SELECT Turnover__c FROM Account WHERE Id = :newOrder.AccountId];
         Assert.areEqual(120.00, newAccounts.Turnover__c, 'The account turnover should be 120');
     }
     
+    //test the related order account turnover calculation for 200 order
     @isTest
     static void calculateAccountTurnOverBatchTest() {
+        //prepare data
         Set<Id> accountIds = new Set<Id>();
         List<Order> orderList = [SELECT AccountId, Status, ShipmentCost__c FROM Order];
         for(Order order: orderList){
@@ -95,10 +114,12 @@ public class OrderTriggerTest {
             accountIds.add(order.AccountId);
         }
 
+        //execute test
         Test.startTest();
             update orderList;
         Test.stopTest();
         
+        //Assert for result
         for(Account newAccounts : [SELECT Turnover__c FROM Account WHERE Id IN:accountIds]){
             Assert.areEqual(120.00, newAccounts.Turnover__c, 'The account turnover should be 120');
         }

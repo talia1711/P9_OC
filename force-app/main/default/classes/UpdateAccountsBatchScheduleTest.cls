@@ -1,6 +1,11 @@
+/***
+ * Author: Talia Ajaz
+ * Date: March 2024
+ * Test class for UpdateAccountsBatchSchedule
+ */
 @isTest
 public class UpdateAccountsBatchScheduleTest {
-	
+    //to setup data used in test methods
     @testSetup
     static void setupData(){
         //create 200 accounts
@@ -13,7 +18,7 @@ public class UpdateAccountsBatchScheduleTest {
         Product2 pd1 = new Product2(Name = 'Chemise Verte longue XYX', Family = 'Chemise');
         Insert pd1;
         
-        //Create one order per account
+        //Create one order per account, tottal 200 orders
         List<Order> orderList = new List<Order>();
         for(Account acc : accList){
             orderList.add(new Order(AccountId = acc.Id, 
@@ -33,7 +38,7 @@ public class UpdateAccountsBatchScheduleTest {
         );
         insert pbe;
         
-        //create one order item per order
+        //create one order item per order, total 200 order items
 		List<OrderItem> orderItemList = new List<OrderItem>();
         for(Order oo : orderList){
             oo.Status = 'Ordered';
@@ -46,11 +51,15 @@ public class UpdateAccountsBatchScheduleTest {
     
     @isTest
     static void updateAccountBatchScheduleTest() {
+
+        //execute test
         Test.startTest();
 			UpdateAccountsBatchSchedule ba = new UpdateAccountsBatchSchedule();
         	Id jobid= Database.executeBatch(ba,200);
         Test.stopTest();
-        
+
+
+        //assert for the result
         for(Account acc : [SELECT Turnover__c FROM Account]) {
             Assert.areEqual(120.00, acc.Turnover__c, 'The account turnover should be 120');
         }

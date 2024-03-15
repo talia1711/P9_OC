@@ -1,6 +1,12 @@
 
+/***
+ * Author: Talia Ajaz
+ * Date: March 2024
+ */
 @isTest
 public with sharing class MyTeamOrdersControllerTest {
+
+    //to setup data used in test methods
     @testSetup
     static void setupData() {
         Account acc = new Account(Name = 'OC');
@@ -28,13 +34,18 @@ public with sharing class MyTeamOrdersControllerTest {
         insert oi1;
     }
 
+    //test the population of data reord from the controller
     @isTest
     static void getDataAgentsAndTotal() {
+        //preparte the controller object
         MyTeamOrdersController controller = new MyTeamOrdersController();
+
+        //execute test
         Test.startTest();
         List<MyTeamOrdersController.Data> data  = controller.getData();
         Test.stopTest();
 
+         //Assert for result
         Assert.areEqual('Talia Ajaz', data[0].agent, 'The agent should be rtegrthth');
         Assert.areEqual(120.0, data[0].total, 'The agent should be 120.0');
 

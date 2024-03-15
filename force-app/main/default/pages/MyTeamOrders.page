@@ -1,7 +1,13 @@
+<!-->
+ * Author: Talia Ajaz
+ * Date: March 2024
+-->
 <apex:page controller="MyTeamOrdersController" lightningStylesheets="true">
+    <!--header-->
     <div class="header" style="display: flex;align-items: center;justify-content: center;font-size:25pt;background-color:black;color:white;">
         FASHA
     </div>
+     <!--table to print the order total amount per agent name-->
     <apex:pageBlock title="Team’s orders">
         <apex:pageBlockTable value="{!data}" var="item">
             <apex:column headerValue="Sales Agent" value="{!item.agent}"/>
